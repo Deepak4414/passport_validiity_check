@@ -13,7 +13,7 @@ const corsOptions = {
   credentials: true,
 };
 
-app.use(cors(corsOptions)); // Enable CORS with options
+app.use(cors()); // Enable CORS with options
 // ✅ Use JSON parser with a limit
 app.use(express.json({ limit: "10mb" }));
 
