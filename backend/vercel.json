@@ -3,13 +3,13 @@
   "builds": [
     {
       "src": "index.js",
-      "use": "@vercel/static-build"
+      "use": "@vercel/node"
     }
   ],
   "routes": [
     {
-      "src": "/deepak",
-      "dest": "/index.js"
+      "src": "/api/(.*)",
+      "dest": "index.js"
     }
   ]
 }
