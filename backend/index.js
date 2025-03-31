@@ -36,7 +36,7 @@ app.use("/api/students", addStudent);
 app.get("/", (req, res) => {
   res.send("Hello World! Backend is working.");
 });
-const Student = require("../models/Student-Schema");
+const Student = require("./models/Student-Schema");
 app.get("/deepak", async (req, res) => {
   try {
     console.log("Fetching students...");
