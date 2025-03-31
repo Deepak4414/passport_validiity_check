@@ -2,7 +2,7 @@
 const mongoose = require('mongoose');
 
 // Replace with your MongoDB connection string
-const mongoURI = 'mongodb+srv://root:root@cluster-1.tdg4iut.mongodb.net/international';
+const mongoURI = 'mongodb+srv://root:root@cluster-1.tdg4iut.mongodb.net/international?retryWrites=true&w=majority';
 
 mongoose.connect(mongoURI, {
     useNewUrlParser: true,
