@@ -6,24 +6,15 @@ const cors = require("cors");
 const app = express();
 
 // ✅ Set CORS Headers
+// ✅ Set CORS Headers
 const corsOptions = {
-  origin: (origin, callback) => {
-    const allowedOrigins = [
-      "https://passport-validiity-check.vercel.app",
-      "http://localhost:3000", // Allow localhost
-    ];
-    if (allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error("Not allowed by CORS"));
-    }
-  },
+  origin: "*",
   methods: "GET, POST, PUT, DELETE, OPTIONS",
   allowedHeaders: "Content-Type, Authorization",
+  credentials: true,
 };
 
-app.use(cors());
-
+app.use(cors(corsOptions)); // Enable CORS with options
 // ✅ Use JSON parser with a limit
 app.use(express.json({ limit: "10mb" }));
 
@@ -41,7 +32,7 @@ app.get("/deepak", async (req, res) => {
   try {
     console.log("Fetching students...");
     const students = await Student.find();
-    res.status(200).json(students);
+    return res.status(200).json(students);
   } catch (error) {
     console.error("Error fetching students:", error);
     res.status(500).json({ error: "Failed to fetch students" });
