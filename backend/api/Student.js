@@ -13,4 +13,14 @@ router.post("/add", async (req, res) => {
   }
 });
 
+// GET: Fetch all students
+router.get("/", async (req, res) => {
+  try {
+    const students = await Student.find(); // Fetch all students from MongoDB
+    res.status(200).json(students);
+  } catch (error) {
+    res.status(500).json({ error: "Failed to fetch students" });
+  }
+});
+
 module.exports = router;

@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import "./AddStudent.css";
 
 const AddStudentDetails = () => {
   const [student, setStudent] = useState({
@@ -38,26 +39,54 @@ const AddStudentDetails = () => {
   };
 
   return (
-    <div>
-      <h2>Add Student Details</h2>
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label>Name:</label>
-          <input type="text" name="name" value={student.name} onChange={handleChange} required />
+    <div className="container">
+      <h2 className="title">Add Student Details</h2>
+      <form onSubmit={handleSubmit} className="form">
+        <div className="form-group">
+          <label className="label" htmlFor="name">Name:</label>
+          <input
+            type="text"
+            name="name"
+            value={student.name}
+            onChange={handleChange}
+            required
+            className="input"
+          />
         </div>
-        <div>
-          <label>Age:</label>
-          <input type="number" name="age" value={student.age} onChange={handleChange} required />
+        <div className="form-group">
+          <label className="label" htmlFor="age">Age:</label>
+          <input
+            type="number"
+            name="age"
+            value={student.age}
+            onChange={handleChange}
+            required
+            className="input"
+          />
         </div>
-        <div>
-          <label>Country:</label>
-          <input type="text" name="country" value={student.country} onChange={handleChange} required />
+        <div className="form-group">
+          <label className="label" htmlFor="country">Country:</label>
+          <input
+            type="text"
+            name="country"
+            value={student.country}
+            onChange={handleChange}
+            required
+            className="input"
+          />
         </div>
-        <div>
-          <label>Passport Number:</label>
-          <input type="text" name="passportNumber" value={student.passportNumber} onChange={handleChange} required />
+        <div className="form-group">
+          <label className="label" htmlFor="passportNumber">Passport Number:</label>
+          <input
+            type="text"
+            name="passportNumber"
+            value={student.passportNumber}
+            onChange={handleChange}
+            required
+            className="input"
+          />
         </div>
-        <button type="submit">Add Student</button>
+        <button type="submit" className="submit-button">Add Student</button>
       </form>
     </div>
   );
