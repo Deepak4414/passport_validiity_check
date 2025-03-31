@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import axios from "axios"; // Import axios
 import "./AddStudent.css";
 
 const AddStudentDetails = () => {
@@ -41,15 +42,20 @@ const AddStudentDetails = () => {
     if (passportImage) formData.append("passportImage", passportImage);
 
     try {
-      const response = await fetch("https://passport-validiity-check-2bbw.vercel.app/api/students/add", {
-        method: "POST",
-        body: formData,
-      });
+      const response = await axios.post(
+        "https://passport-validiity-check-2bbw.vercel.app/api/students/add",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
 
-      if (response.ok) {
+      if (response.status === 200) {
         alert("Student added successfully!");
         setStudent({
-        registrationNumber: "",
+          registrationNumber: "",
           name: "",
           age: "",
           fatherName: "",
@@ -76,26 +82,117 @@ const AddStudentDetails = () => {
     <div className="container">
       <h2 className="title">Add Student Details</h2>
       <form onSubmit={handleSubmit} className="form" encType="multipart/form-data">
+        <input
+          type="text"
+          name="registrationNumber"
+          value={student.registrationNumber}
+          onChange={handleChange}
+          placeholder="Registration Number"
+          required
+        />
+        <input
+          type="text"
+          name="name"
+          value={student.name}
+          onChange={handleChange}
+          placeholder="Name"
+          required
+        />
+        <input
+          type="number"
+          name="age"
+          value={student.age}
+          onChange={handleChange}
+          placeholder="Age"
+          required
+        />
+        <input
+          type="text"
+          name="fatherName"
+          value={student.fatherName}
+          onChange={handleChange}
+          placeholder="Father's Name"
+          required
+        />
+        <input
+          type="text"
+          name="motherName"
+          value={student.motherName}
+          onChange={handleChange}
+          placeholder="Mother's Name"
+          required
+        />
+        <input
+          type="text"
+          name="country"
+          value={student.country}
+          onChange={handleChange}
+          placeholder="Country"
+          required
+        />
 
-        <input type="text" name="registrationNumber" value={student.registrationNumber} onChange={handleChange} placeholder="Registration Number" required />
-        <input type="text" name="name" value={student.name} onChange={handleChange} placeholder="Name" required />
-        <input type="number" name="age" value={student.age} onChange={handleChange} placeholder="Age" required />
-        <input type="text" name="fatherName" value={student.fatherName} onChange={handleChange} placeholder="Father's Name" required />
-        <input type="text" name="motherName" value={student.motherName} onChange={handleChange} placeholder="Mother's Name" required />
-        <input type="text" name="country" value={student.country} onChange={handleChange} placeholder="Country" required />
-        
         <label>Student Image:</label>
-        <input type="file" name="studentImage" onChange={handleFileChange} required />
+        <input
+          type="file"
+          name="studentImage"
+          onChange={handleFileChange}
+          required
+        />
 
         <label>Passport Image:</label>
-        <input type="file" name="passportImage" onChange={handleFileChange} required />
+        <input
+          type="file"
+          name="passportImage"
+          onChange={handleFileChange}
+          required
+        />
 
-        <input type="text" name="passportNumber" value={student.passportNumber} onChange={handleChange} placeholder="Passport Number" required />
-        <input type="date" name="passportIssueDate" value={student.passportIssueDate} onChange={handleChange} required />
-        <input type="date" name="passportExpiryDate" value={student.passportExpiryDate} onChange={handleChange} required />
-        <input type="text" name="course" value={student.course} onChange={handleChange} placeholder="Course" required />
-        <input type="text" name="branch" value={student.branch} onChange={handleChange} placeholder="Branch" required />
-        <input type="number" name="yearOfStudy" value={student.yearOfStudy} onChange={handleChange} placeholder="Year of Study" required />
+        <input
+          type="text"
+          name="passportNumber"
+          value={student.passportNumber}
+          onChange={handleChange}
+          placeholder="Passport Number"
+          required
+        />
+        <input
+          type="date"
+          name="passportIssueDate"
+          value={student.passportIssueDate}
+          onChange={handleChange}
+          required
+        />
+        <input
+          type="date"
+          name="passportExpiryDate"
+          value={student.passportExpiryDate}
+          onChange={handleChange}
+          required
+        />
+        <input
+          type="text"
+          name="course"
+          value={student.course}
+          onChange={handleChange}
+          placeholder="Course"
+          required
+        />
+        <input
+          type="text"
+          name="branch"
+          value={student.branch}
+          onChange={handleChange}
+          placeholder="Branch"
+          required
+        />
+        <input
+          type="number"
+          name="yearOfStudy"
+          value={student.yearOfStudy}
+          onChange={handleChange}
+          placeholder="Year of Study"
+          required
+        />
 
         <button type="submit">Add Student</button>
       </form>
@@ -103,4 +200,4 @@ const AddStudentDetails = () => {
   );
 };
 
-export default AddStudentDetails;
+export default AddStudentDetails;       
