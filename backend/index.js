@@ -4,35 +4,45 @@ const addStudent = require("./api/Student"); // Import student router
 const cors = require("cors");
 
 const app = express();
-app.use(express.json());
 
 // ✅ Set CORS Headers
-app.use(cors()); // Allow all origins temporarily
-app.use((req, res, next) => {
-  res.header("Access-Control-Allow-Origin", "https://passport-validiity-check.vercel.app");
-  res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
-  res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
-  next();
-});
+const corsOptions = {
+  origin: (origin, callback) => {
+    const allowedOrigins = [
+      "https://passport-validiity-check.vercel.app",
+      "http://localhost:3000", // Allow localhost
+    ];
+    if (allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+  methods: "GET, POST, PUT, DELETE, OPTIONS",
+  allowedHeaders: "Content-Type, Authorization",
+};
+
+app.use(cors());
+
+// ✅ Use JSON parser with a limit
+app.use(express.json({ limit: "10mb" }));
 
 // ✅ Serve static files (if using uploads)
-app.use("/uploads", express.static("uploads"));
+app.use("/uploads", express.static("uploads", { maxAge: "1h" }));
 
 // ✅ Use API routes
 app.use("/api/students", addStudent);
-app.get("/api/students/show", async (req, res) => {
-  try {
-    console.log("Fetching students...");
-    const students = await students.find();
-    res.status(200).json(students);
-  } catch (error) {
-    console.error("Error fetching students:", error);
-    res.status(500).json({ error: "Failed to fetch students" });
-  }
-});
+
 app.get("/", (req, res) => {
   res.send("Hello World! Backend is working.");
 });
 
 // ✅ Export app for Vercel
 module.exports = app;
+
+// ✅ Set port and listen
+const port = process.env.PORT || 3000; // Use environment port or default to 3001
+
+app.listen(port, () => {
+  console.log(`Server listening on port ${port}`);
+});

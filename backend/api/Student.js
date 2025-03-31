@@ -13,14 +13,37 @@ const storage = multer.diskStorage({
     cb(null, Date.now() + "-" + file.originalname);
   },
 });
-const upload = multer({ storage: storage });
+const upload = multer({ storage: storage, limits: { fieldSize: 1024 * 1024 * 5 } }); // Set file size limit to 5MB
 
 // POST API to add a student
 router.post("/add", upload.fields([{ name: "studentImage" }, { name: "passportImage" }]), async (req, res) => {
   try {
     console.log("Received request:", req.body);
 
+    // Validate request body
+    const requiredFields = [
+      "registrationNumber",
+      "name",
+      "age",
+      "fatherName",
+      "motherName",
+      "country",
+      "passportNumber",
+      "passportIssueDate",
+      "passportExpiryDate",
+      "course",
+      "branch",
+      "yearOfStudy",
+    ];
+    if (!requiredFields.every((field) => req.body[field])) {
+      return res.status(400).json({ error: "Missing required fields" });
+    }
+
     const { registrationNumber, name, age, fatherName, motherName, country, passportNumber, passportIssueDate, passportExpiryDate, course, branch, yearOfStudy } = req.body;
+
+    // Handle file uploads
+    const studentImage = req.files["studentImage"] ? req.files["studentImage"][0].path : null;
+    const passportImage = req.files["passportImage"] ? req.files["passportImage"][0].path : null;
 
     const newStudent = new Student({
       registrationNumber,
@@ -29,8 +52,8 @@ router.post("/add", upload.fields([{ name: "studentImage" }, { name: "passportIm
       fatherName,
       motherName,
       country,
-      studentImage: req.files["studentImage"] ? req.files["studentImage"][0].path : null,
-      passportImage: req.files["passportImage"] ? req.files["passportImage"][0].path : null,
+      studentImage,
+      passportImage,
       passportNumber,
       passportIssueDate,
       passportExpiryDate,
@@ -48,7 +71,7 @@ router.post("/add", upload.fields([{ name: "studentImage" }, { name: "passportIm
 });
 
 // GET API to fetch students
-router.get("/show", async (req, res) => {
+router.get("/", async (req, res) => {
   try {
     console.log("Fetching students...");
     const students = await Student.find();
