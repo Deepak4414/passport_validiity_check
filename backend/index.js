@@ -20,7 +20,7 @@ app.use("/uploads", express.static("uploads"));
 
 // ✅ Use API routes
 app.use("/api/students", addStudent);
-app.get("/api/student/show", async (req, res) => {
+app.get("/api/students/show", async (req, res) => {
   try {
     console.log("Fetching students...");
     const students = await students.find();

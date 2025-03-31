@@ -5,6 +5,9 @@ import AddStudentDetails from "./components/AddStudentDetails";
 import UpdateStudent from "./components/UpdateSudent";
 import Navbar from "./components/Navbar";
 import ShowStudent from "./components/ShowStudent";
+import axios from "axios";
+axios.defaults.withCredentials = true;
+
 const App = () => {
   return (
     <Router>
