@@ -4,7 +4,7 @@ import Home from "./components/Home";
 import AddStudentDetails from "./components/AddStudentDetails";
 import UpdateStudent from "./components/UpdateSudent";
 import Navbar from "./components/Navbar";
-
+import ShowStudent from "./components/ShowStudent";
 const App = () => {
   return (
     <Router>
@@ -13,6 +13,7 @@ const App = () => {
         <Route path="/" element={<Home />} />
         <Route path="/about" element={<AddStudentDetails />} />
         <Route path="/contact" element={<UpdateStudent />} />
+        <Route path="/all-student" element={<ShowStudent/>} />
       </Routes>
     </Router>
   );
