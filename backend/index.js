@@ -20,7 +20,16 @@ app.use("/uploads", express.static("uploads"));
 
 // ✅ Use API routes
 app.use("/api/students", addStudent);
-
+app.get("/api/students/show", async (req, res) => {
+  try {
+    console.log("Fetching students...");
+    const students = await Student.find();
+    res.status(200).json(students);
+  } catch (error) {
+    console.error("Error fetching students:", error);
+    res.status(500).json({ error: "Failed to fetch students" });
+  }
+});
 app.get("/", (req, res) => {
   res.send("Hello World! Backend is working.");
 });
