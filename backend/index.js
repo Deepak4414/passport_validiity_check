@@ -10,6 +10,13 @@ app.use("/uploads", express.static("uploads"));
 app.use(express.json());
 // Allow requests from your frontend
 app.use(cors({ origin: "https://passport-validiity-check.vercel.app" }));
+
+
+app.get("/api/students", (req, res) => {
+  res.json({ message: "CORS is working!" });
+});
+
+
 // Correct Route Usage
 app.use("/api/students", addStudent);
 
