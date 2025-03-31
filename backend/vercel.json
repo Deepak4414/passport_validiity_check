@@ -9,7 +9,7 @@
   "routes": [
     {
       "src": "/deepak",
-      "dest": "index.js"
+      "dest": "/index.js"
     }
   ]
 }
