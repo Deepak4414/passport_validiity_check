@@ -45,7 +45,7 @@ router.post("/add", upload.fields([{ name: "studentImage" }, { name: "passportIm
 });
 
 // GET API to fetch students
-router.get("/show", async (req, res) => {
+router.get("/", async (req, res) => {
   try {
     const students = await Student.find();
     res.status(200).json(students);
