@@ -3,11 +3,10 @@ import React, { useState, useEffect } from "react";
 const ShowStudent = () => {
   const [students, setStudents] = useState([]);
 
-  // Fetch student details from API
   useEffect(() => {
     const fetchStudents = async () => {
       try {
-        const response = await fetch("https://passport-validiity-check-2bbw.vercel.app/api/students");
+        const response = await fetch("https://passport-validiity-check-2bbw.vercel.app/api/students/show"); // Correct API endpoint
         if (!response.ok) {
           throw new Error("Failed to fetch students");
         }
