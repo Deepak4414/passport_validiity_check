@@ -41,7 +41,7 @@ const AddStudentDetails = () => {
     if (passportImage) formData.append("passportImage", passportImage);
 
     try {
-      const response = await fetch("http://localhost:3000/api/students/add", {
+      const response = await fetch("https://passport-validiity-check-2bbw.vercel.app/api/students/add", {
         method: "POST",
         body: formData,
       });
