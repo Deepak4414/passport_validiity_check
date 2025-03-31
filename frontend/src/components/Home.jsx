@@ -58,7 +58,7 @@ const Home = () => {
               <div style={{ marginLeft: "15px", textAlign: "center" }}>
                 {student.studentImage ? (
                   <img
-                    src={`/uploads/${student.studentImage}`} // Assuming the image is stored in 'uploads' folder
+                    src={`/${student.studentImage}`} // Assuming the image is stored in 'uploads' folder
                     alt="Student"
                     style={{ width: "80px", height: "80px", borderRadius: "10px", objectFit: "cover" }}
                   />
