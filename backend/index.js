@@ -23,7 +23,7 @@ app.use("/api/students", addStudent);
 app.get("/api/student/show", async (req, res) => {
   try {
     console.log("Fetching students...");
-    const students = await Student.find();
+    const students = await students.find();
     res.status(200).json(students);
   } catch (error) {
     console.error("Error fetching students:", error);
