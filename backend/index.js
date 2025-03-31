@@ -33,7 +33,7 @@ app.use("/uploads", express.static("uploads", { maxAge: "1h" }));
 // ✅ Use API routes
 app.use("/api/students", addStudent);
 
-app.get("/", (req, res) => {
+app.get("/a", (req, res) => {
   res.send("Hello World! Backend is working.");
 });
 const Student = require("./models/Student-Schema");
