@@ -37,7 +37,6 @@ app.get("/deepak", async (req, res) => {
     console.error("Error fetching students:", error);
     res.status(500).json({ error: "Failed to fetch students" });
   }
-  res.send("Hello World! Backend is working.");
 });
 
 app.listen(3000, () => console.log("Server ready on port 3000."));
