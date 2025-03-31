@@ -8,8 +8,8 @@ const port = 3000;
 app.use("/uploads", express.static("uploads"));
 
 app.use(express.json());
-app.use(cors({ origin: "https://passport-validiity-check-2bbw.vercel.app" }));
-
+// Allow requests from your frontend
+app.use(cors({ origin: "https://passport-validiity-check.vercel.app" }));
 // Correct Route Usage
 app.use("/api/students", addStudent);
 
