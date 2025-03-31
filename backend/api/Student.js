@@ -17,9 +17,10 @@ const upload = multer({ storage: storage });
 // POST API to add a student
 router.post("/add", upload.fields([{ name: "studentImage" }, { name: "passportImage" }]), async (req, res) => {
   try {
-    const { name, age, fatherName, motherName, country, passportIssueDate, passportExpiryDate, course, branch, yearOfStudy } = req.body;
+    const { registrationNumber,name, age, fatherName, motherName, country,passportNumber,passportIssueDate, passportExpiryDate, course, branch, yearOfStudy } = req.body;
 
     const newStudent = new Student({
+      registrationNumber,
       name,
       age,
       fatherName,
@@ -27,6 +28,7 @@ router.post("/add", upload.fields([{ name: "studentImage" }, { name: "passportIm
       country,
       studentImage: req.files["studentImage"] ? req.files["studentImage"][0].path : null,
       passportImage: req.files["passportImage"] ? req.files["passportImage"][0].path : null,
+      passportNumber,
       passportIssueDate,
       passportExpiryDate,
       course,

@@ -3,11 +3,13 @@ import "./AddStudent.css";
 
 const AddStudentDetails = () => {
   const [student, setStudent] = useState({
+    registrationNumber: "",
     name: "",
     age: "",
     fatherName: "",
     motherName: "",
     country: "",
+    passportNumber: "",
     passportIssueDate: "",
     passportExpiryDate: "",
     course: "",
@@ -47,11 +49,13 @@ const AddStudentDetails = () => {
       if (response.ok) {
         alert("Student added successfully!");
         setStudent({
+        registrationNumber: "",
           name: "",
           age: "",
           fatherName: "",
           motherName: "",
           country: "",
+          passportNumber: "",
           passportIssueDate: "",
           passportExpiryDate: "",
           course: "",
@@ -72,6 +76,8 @@ const AddStudentDetails = () => {
     <div className="container">
       <h2 className="title">Add Student Details</h2>
       <form onSubmit={handleSubmit} className="form" encType="multipart/form-data">
+
+        <input type="text" name="registrationNumber" value={student.registrationNumber} onChange={handleChange} placeholder="Registration Number" required />
         <input type="text" name="name" value={student.name} onChange={handleChange} placeholder="Name" required />
         <input type="number" name="age" value={student.age} onChange={handleChange} placeholder="Age" required />
         <input type="text" name="fatherName" value={student.fatherName} onChange={handleChange} placeholder="Father's Name" required />
@@ -84,6 +90,7 @@ const AddStudentDetails = () => {
         <label>Passport Image:</label>
         <input type="file" name="passportImage" onChange={handleFileChange} required />
 
+        <input type="text" name="passportNumber" value={student.passportNumber} onChange={handleChange} placeholder="Passport Number" required />
         <input type="date" name="passportIssueDate" value={student.passportIssueDate} onChange={handleChange} required />
         <input type="date" name="passportExpiryDate" value={student.passportExpiryDate} onChange={handleChange} required />
         <input type="text" name="course" value={student.course} onChange={handleChange} placeholder="Course" required />

@@ -1,11 +1,13 @@
 const mongoose = require("mongoose");
 
 const StudentSchema = new mongoose.Schema({
+  registrationNumber: { type: String, required: true, unique: true },
   name: { type: String, required: true },
   age: { type: Number, required: true },
   fatherName: { type: String, required: true },
   motherName: { type: String, required: true },
   country: { type: String, required: true },
+  passportNumber: { type: String, required: true },
   studentImage: { type: String }, // Will store file path
   passportImage: { type: String }, // Will store file path
   passportIssueDate: { type: Date, required: true },

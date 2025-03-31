@@ -7,7 +7,7 @@ const ShowStudent = () => {
   useEffect(() => {
     const fetchStudents = async () => {
       try {
-        const response = await fetch("http://localhost:3000/api/students");
+        const response = await fetch("https://passport-validiity-check-2bbw.vercel.app/api/students");
         if (!response.ok) {
           throw new Error("Failed to fetch students");
         }
@@ -43,6 +43,7 @@ const ShowStudent = () => {
               <p><strong>Age:</strong> {student.age}</p>
               <p><strong>Country:</strong> {student.country}</p>
               <p><strong>Passport:</strong> {student.passportNumber}</p>
+              <p><strong>Phone:</strong> {student.passportNumber}</p>
             </div>
           ))
         ) : (
