@@ -49,12 +49,5 @@ app.get("/deepak", async (req, res) => {
   res.send("Hello World! Backend is working.");
 });
 
-// ✅ Export app for Vercel
+app.listen(3000, () => console.log("Server ready on port 3000."));
 module.exports = app;
-
-// ✅ Set port and listen
-const port = process.env.PORT || 3000; // Use environment port or default to 3001
-
-app.listen(port, () => {
-  console.log(`Server listening on port ${port}`);
-});
