@@ -2,18 +2,25 @@ const express = require("express");
 const router = express.Router();
 const Student = require("../models/Student-Schema");
 const multer = require("multer");
-const path = require("path");
+const { CloudinaryStorage } = require("multer-storage-cloudinary");
+const cloudinary = require("cloudinary").v2;
 
-// Multer storage setup
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, path.join(__dirname, "../uploads")); // Ensure proper path
-  },
-  filename: (req, file, cb) => {
-    cb(null, Date.now() + "-" + file.originalname);
+// Configure Cloudinary
+cloudinary.config({
+  cloud_name: "dpsfob1ei",
+  api_key: "996333827458941",
+  api_secret: "EWFryO5Lz0BtJA2OTKANi1v2NFM",
+});
+
+// Multer storage setup with Cloudinary
+const storage = new CloudinaryStorage({
+  cloudinary: cloudinary,
+  params: {
+    folder: "students", // Folder name in Cloudinary
+    allowed_formats: ["jpg", "jpeg", "png"],
   },
 });
-const upload = multer({ storage: storage, limits: { fieldSize: 1024 * 1024 * 5 } }); // Set file size limit to 5MB
+const upload = multer({ storage: storage });
 
 // POST API to add a student
 router.post("/add", upload.fields([{ name: "studentImage" }, { name: "passportImage" }]), async (req, res) => {
@@ -22,26 +29,16 @@ router.post("/add", upload.fields([{ name: "studentImage" }, { name: "passportIm
 
     // Validate request body
     const requiredFields = [
-      "registrationNumber",
-      "name",
-      "age",
-      "fatherName",
-      "motherName",
-      "country",
-      "passportNumber",
-      "passportIssueDate",
-      "passportExpiryDate",
-      "course",
-      "branch",
-      "yearOfStudy",
+      "registrationNumber", "name", "age", "fatherName", "motherName", "country", 
+      "passportNumber", "passportIssueDate", "passportExpiryDate", "course", "branch", "yearOfStudy"
     ];
-    if (!requiredFields.every((field) => req.body[field])) {
+    if (!requiredFields.every(field => req.body[field])) {
       return res.status(400).json({ error: "Missing required fields" });
     }
 
     const { registrationNumber, name, age, fatherName, motherName, country, passportNumber, passportIssueDate, passportExpiryDate, course, branch, yearOfStudy } = req.body;
 
-    // Handle file uploads
+    // Get Cloudinary URLs
     const studentImage = req.files["studentImage"] ? req.files["studentImage"][0].path : null;
     const passportImage = req.files["passportImage"] ? req.files["passportImage"][0].path : null;
 
