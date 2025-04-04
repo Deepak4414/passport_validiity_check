@@ -16,6 +16,7 @@ const UpdateStudent = () => {
       try {
         const response = await axios.get(`https://passport-validiity-check-2bbw.vercel.app/api/students/${id}`);
         setStudent(response.data);
+        console.log(response.data);
       } catch (error) {
         console.error("Error fetching student data:", error);
       }
