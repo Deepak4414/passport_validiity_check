@@ -51,7 +51,7 @@ const UpdateStudent = () => {
 
     try {
       const response = await axios.put(
-        `https://localhost:3000/api/students/update/${id}`,
+        `https://passport-validiity-check-2bbw.vercel.app/api/students/update/${id}`,
         formData,
         {
           headers: { "Content-Type": "multipart/form-data" },
