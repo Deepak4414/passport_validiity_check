@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-
+import { Link } from "react-router-dom";
 const ShowStudent = () => {
   const [students, setStudents] = useState([]);
 
@@ -50,6 +50,9 @@ const ShowStudent = () => {
                 <p><strong>Course:</strong> {student.course}</p>
                 <p><strong>Branch:</strong> {student.branch}</p>
                 <p><strong>Year of Study:</strong> {student.yearOfStudy}</p>
+                <p><Link to={`/update-student/${student._id}`}>
+                  <button className="edit-btn">Edit</button>
+                </Link></p>
               </div>
 
               {/* Right Section - Student Image */}

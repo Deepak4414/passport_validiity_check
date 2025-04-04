@@ -1,49 +1,84 @@
-.container {
-    max-width: 500px;
+  /* Global Styles */
+
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    font-family: Arial, sans-serif;
+    font-size: 16px;
+    line-height: 1.5;
+    color: #333;
+    background-color: #f9f9f9;
+  }
+
+  .container {
+    max-width: 800px;
     margin: 40px auto;
     padding: 20px;
-    background-color: #f9f9f9;
+    background-color: #fff;
     border: 1px solid #ddd;
     border-radius: 10px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   }
-  
+
   .title {
-    text-align: center;
+    font-size: 24px;
+    font-weight: bold;
     margin-bottom: 20px;
   }
-  
+
   .form {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-  
-  .form-group {
     margin-bottom: 20px;
-    width: 100%;
   }
-  
-  .label {
+
+  fieldset {
+    margin-bottom: 20px;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+  }
+
+  legend {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
+
+  span {
     display: block;
     margin-bottom: 10px;
-    font-weight: bold;
   }
-  
-  .input {
+
+  label {
+    display: block;
+    margin-bottom: 5px;
+  }
+
+  input[type="text"],
+  input[type="date"],
+  input[type="tel"],
+  select {
     width: 100%;
     height: 40px;
     padding: 10px;
+    margin-bottom: 10px;
     border: 1px solid #ccc;
     border-radius: 5px;
   }
-  
-  .input:focus {
-    border-color: #aaa;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+
+  input[type="file"] {
+    width: 100%;
+    height: 40px;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
   }
-  
-  .submit-button {
+
+  button[type="submit"] {
     width: 100%;
     height: 40px;
     padding: 10px;
@@ -53,7 +88,30 @@
     border-radius: 5px;
     cursor: pointer;
   }
-  
-  .submit-button:hover {
+
+  button[type="submit"]:hover {
     background-color: #3e8e41;
+  }
+
+  /* Responsive Design */
+
+  @media (max-width: 768px) {
+    .container {
+      margin: 20px auto;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .container {
+      margin: 10px auto;
+    }
+    input[type="text"],
+    input[type="date"],
+    input[type="tel"],
+    select {
+      height: 30px;
+    }
+    button[type="submit"] {
+      height: 30px;
+    }
   }

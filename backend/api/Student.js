@@ -23,49 +23,110 @@ const storage = new CloudinaryStorage({
 const upload = multer({ storage: storage });
 
 // POST API to add a student
-router.post("/add", upload.fields([{ name: "studentImage" }, { name: "passportImage" }]), async (req, res) => {
-  try {
-    console.log("Received request:", req.body);
+router.post(
+  "/add",
+  upload.fields([
+    { name: "studentImage" },
+    { name: "passportImage" },
+    { name: "frroImage" },
+  ]),
+  async (req, res) => {
+    try {
+      console.log("Received request:", req.body);
 
-    // Validate request body
-    const requiredFields = [
-      "registrationNumber", "name", "age", "fatherName", "motherName", "country", 
-      "passportNumber", "passportIssueDate", "passportExpiryDate", "course", "branch", "yearOfStudy"
-    ];
-    if (!requiredFields.every(field => req.body[field])) {
-      return res.status(400).json({ error: "Missing required fields" });
+      // Validate request body
+      const requiredFields = [
+        "vuId",
+        "registrationNumber",
+        "name",
+        "dob",
+        "gender",
+        "country",
+        "course",
+        "branch",
+        "batchOfStudying",
+        "mobileNumber",
+        "passportNumber",
+        "passportIssueDate",
+        "passportExpiryDate",
+        "frroIssueDate",
+        "frroExpiryDate",
+        "dateOfReporting",
+        "visaNumber",
+        "visaIssueDate",
+        "visaExpiryDate",
+      ];
+
+      if (!requiredFields.every((field) => req.body[field])) {
+        return res.status(400).json({ error: "Missing required fields" });
+      }
+
+      const {
+        vuId,
+        registrationNumber,
+        name,
+        dob,
+        gender,
+        country,
+        course,
+        branch,
+        batchOfStudying,
+        mobileNumber,
+        passportNumber,
+        passportIssueDate,
+        passportExpiryDate,
+        frroIssueDate,
+        frroExpiryDate,
+        dateOfReporting,
+        visaNumber,
+        visaIssueDate,
+        visaExpiryDate,
+      } = req.body;
+
+      // Get Cloudinary URLs
+      const studentImage = req.files["studentImage"]
+        ? req.files["studentImage"][0].path
+        : null;
+      const passportImage = req.files["passportImage"]
+        ? req.files["passportImage"][0].path
+        : null;
+      const frroImage = req.files["frroImage"]
+        ? req.files["frroImage"][0].path
+        : null;
+
+      const newStudent = new Student({
+        vuId,
+        registrationNumber,
+        name,
+        dob,
+        gender,
+        country,
+        course,
+        branch,
+        batchOfStudying,
+        mobileNumber,
+        studentImage,
+        passportImage,
+        passportNumber,
+        passportIssueDate,
+        passportExpiryDate,
+        frroImage,
+        frroIssueDate,
+        frroExpiryDate,
+        dateOfReporting,
+        visaNumber,
+        visaIssueDate,
+        visaExpiryDate,
+      });
+
+      await newStudent.save();
+      res.status(201).json({ message: "Student added successfully!" });
+    } catch (error) {
+      console.error("Error adding student:", error);
+      res.status(500).json({ error: "Failed to add student" });
     }
-
-    const { registrationNumber, name, age, fatherName, motherName, country, passportNumber, passportIssueDate, passportExpiryDate, course, branch, yearOfStudy } = req.body;
-
-    // Get Cloudinary URLs
-    const studentImage = req.files["studentImage"] ? req.files["studentImage"][0].path : null;
-    const passportImage = req.files["passportImage"] ? req.files["passportImage"][0].path : null;
-
-    const newStudent = new Student({
-      registrationNumber,
-      name,
-      age,
-      fatherName,
-      motherName,
-      country,
-      studentImage,
-      passportImage,
-      passportNumber,
-      passportIssueDate,
-      passportExpiryDate,
-      course,
-      branch,
-      yearOfStudy,
-    });
-
-    await newStudent.save();
-    res.status(201).json({ message: "Student added successfully!" });
-  } catch (error) {
-    console.error("Error adding student:", error);
-    res.status(500).json({ error: "Failed to add student" });
   }
-});
+);
 
 // GET API to fetch students
 router.get("/", async (req, res) => {
