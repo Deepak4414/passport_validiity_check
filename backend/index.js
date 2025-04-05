@@ -8,7 +8,7 @@ const app = express();
 
 // ✅ Set CORS Headers
 const corsOptions = {
-  origin: "https://passport-validiity-check-fw4thbzrb.vercel.app",
+  origin: "https://passport-validiity-check.vercel.app/",
   methods: "GET, POST, PUT, DELETE, OPTIONS, PATCH",
   allowedHeaders: "Content-Type, Authorization",
   credentials: true,
