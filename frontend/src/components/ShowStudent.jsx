@@ -1,12 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
 const ShowStudent = () => {
   const [students, setStudents] = useState([]);
+  const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
     const fetchStudents = async () => {
       try {
-        const response = await fetch("https://passport-validiity-check-2bbw.vercel.app/api/students"); // Correct API endpoint
+        const response = await fetch(`${API_BASE_URL}/api/students`); // Correct API endpoint
         if (!response.ok) {
           throw new Error("Failed to fetch students");
         }
@@ -20,12 +23,28 @@ const ShowStudent = () => {
     fetchStudents();
   }, []);
 
+  const filteredStudents = students.filter((student) => {
+    const studentName = student.registrationNumber.toLowerCase();
+    const searchQueryLower = searchQuery.toLowerCase();
+    return studentName.includes(searchQueryLower);
+  });
+
   return (
     <div style={{ textAlign: "center", padding: "20px" }}>
       <h2>Student Details</h2>
+      <div style={{ marginBottom: "20px" }}>
+        <input
+          type="search"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          placeholder="Search by Registration Number"
+          style={{ width: "50%", padding: "10px", fontSize: "16px" }}
+        />
+      </div>
+
       <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "center" }}>
-        {students.length > 0 ? (
-          students.map((student) => (
+        {filteredStudents.length > 0 ? (
+          filteredStudents.map((student) => (
             <div
               key={student._id}
               style={{
@@ -44,19 +63,21 @@ const ShowStudent = () => {
               {/* Left Section - Student Details */}
               <div style={{ flex: 1, textAlign: "left" }}>
                 <h3>{student.name}</h3>
+                <p><strong>Student ID:</strong> {student.registrationNumber}</p>
+                <p><strong>Passport Number:</strong> {student.passportNumber}</p>
                 <p><strong>Age:</strong> {student.age}</p>
                 <p><strong>Passport Issue Date:</strong> {new Date(student.passportIssueDate).toLocaleDateString()}</p>
                 <p><strong>Passport Expiry Date:</strong> {new Date(student.passportExpiryDate).toLocaleDateString()}</p>
                 <p><strong>Course:</strong> {student.course}</p>
                 <p><strong>Branch:</strong> {student.branch}</p>
                 <p><strong>Year of Study:</strong> {student.yearOfStudy}</p>
-                <p><Link to={`/update-student/${student._id}`}>
-                  <button className="edit-btn">Edit</button>
-                </Link></p>
               </div>
 
               {/* Right Section - Student Image */}
               <div style={{ marginLeft: "15px", textAlign: "center" }}>
+                <p style={{ marginTop: "-30px"}}><Link to={`/update-student/${student._id}`}>
+                  <button className="edit-btn">Edit</button>
+                </Link></p>
                 {student.studentImage ? (
                   <img
                     src={`${student.studentImage}`} // Assuming the image is stored in 'uploads' folder

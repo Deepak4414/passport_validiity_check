@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import "./AddStudent.css";
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 const AddStudentDetails = () => {
   const [student, setStudent] = useState({
@@ -54,7 +55,7 @@ const AddStudentDetails = () => {
     try {
       const response = await axios.post(
         // "https://passport-validiity-check-2bbw.vercel.app/api/students/add",
-        "http://localhost:3000/api/students/add",
+        `${API_BASE_URL}/api/students/add `,
         formData,
         {
           headers: {

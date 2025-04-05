@@ -6,7 +6,7 @@ const Navbar = () => {
     <nav style={styles.navbar}>
       <NavLink to="/" style={styles.link} activeStyle={styles.active}>Home</NavLink>
       <NavLink to="/about" style={styles.link} activeStyle={styles.active}>Add Student</NavLink>
-      <NavLink to="/contact" style={styles.link} activeStyle={styles.active}>Update Student</NavLink>
+      {/* <NavLink to="/contact" style={styles.link} activeStyle={styles.active}>Update Student</NavLink> */}
       <NavLink to="/all-student" style={styles.link} activeStyle={styles.active}>Show Student</NavLink>
     </nav>
   );

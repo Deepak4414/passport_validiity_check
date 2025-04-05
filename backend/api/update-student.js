@@ -46,4 +46,6 @@ router.put("/update/:id", upload.fields([{ name: "studentImage" }, { name: "pass
   }
 });
 
+
+
 module.exports = router;

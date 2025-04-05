@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
 // import "./StudentList.css";
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 const StudentList = () => {
   const [students, setStudents] = useState([]);
@@ -9,7 +10,7 @@ const StudentList = () => {
   useEffect(() => {
     const fetchStudents = async () => {
       try {
-        const response = await axios.get("https://passport-validiity-check-2bbw.vercel.app/api/students");
+        const response = await axios.get(`${API_BASE_URL}/api/students`);
         setStudents(response.data);
         console.log(response.data);
       } catch (error) {

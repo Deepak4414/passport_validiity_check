@@ -23,6 +23,11 @@ const StudentSchema = new mongoose.Schema({
   visaNumber: { type: String, required: true, unique: true },
   visaIssueDate: { type: Date, required: true },
   visaExpiryDate: { type: Date, required: true },
+  studentStatus: {
+    type: String,
+    enum: ["Not Yet Informed", "Informed", "Applied for Renewal"],
+    default: "Not Yet Informed"
+  },
 });
 
 // Create and export the model

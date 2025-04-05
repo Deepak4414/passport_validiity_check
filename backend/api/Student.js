@@ -155,6 +155,28 @@ router.get("/:id", async (req, res) => {
     res.status(500).json({ error: "Failed to fetch student" });
   }
 });
+// PATCH route to update student status
+router.patch('/:id/status', async (req, res) => {
+  const { id } = req.params;
+  const { status } = req.body;
+  if (!["Not Yet Informed", "Informed", "Applied for Renewal"].includes(status)) {
+    return res.status(400).json({ error: "Invalid status value" });
+  }
 
+  try {
+    const updatedStudent = await Student.findByIdAndUpdate(
+      id,
+      { studentStatus: status },
+      { new: true }
+    );
+    if (!updatedStudent) {
+      return res.status(404).json({ error: "Student not found" });
+    }
+    res.json(updatedStudent);
+    console.log("Student status updated:", updatedStudent);
+  } catch (error) {
+    res.status(500).json({ error: "Error updating student status" });
+  }
+});
 
 module.exports = router;
