@@ -71,7 +71,7 @@ const ShowStudent = () => {
                   <h3>{student.name}</h3>
                   <p><strong>Student ID:</strong> {student.registrationNumber}</p>
                   <p><strong>Passport Number:</strong> {student.passportNumber}</p>
-                  <p><strong>Age:</strong> {student.age}</p>
+                  <p><strong>Age:</strong> {new Date(student.dob).toLocaleDateString()}</p>
                   <p><strong>Course:</strong> {student.course}</p>
                   <p><strong>Branch:</strong> {student.branch}</p>
                   <p><strong>Year of Study:</strong> {student.yearOfStudy}</p>

@@ -121,7 +121,7 @@ const Home = () => {
                 <h3>{student.name}</h3>
                 <p><strong>Registration Number:</strong> {student.registrationNumber}</p>
                 <p><strong>Passport Number:</strong> {student.passportNumber}</p>
-                <p><strong>Age:</strong> {student.dob}</p>
+                <p><strong>Age:</strong> {new Date(student.dob).toLocaleDateString()}</p>
                 <p><strong>FRRO Issue Date:</strong> {new Date(student.frroIssueDate).toLocaleDateString()}</p>
                 <p><strong>FRRO Expiry Date:</strong> {new Date(student.frroExpiryDate).toLocaleDateString()}</p>
                 <p><strong>Course:</strong> {student.course}</p>
