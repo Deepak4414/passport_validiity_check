@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, Link } from "react-router-dom";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -68,8 +68,18 @@ const UpdateStudent = () => {
 
   return (
     <div className="container">
+      <Link to={`/student/${id}`}>
+        <button className="edit-btn" >
+        ⬅️
+        </button>
+      </Link>
+
       <h2 className="title">Update Student Details</h2>
-      <form onSubmit={handleSubmit} className="form" encType="multipart/form-data">
+      <form
+        onSubmit={handleSubmit}
+        className="form"
+        encType="multipart/form-data"
+      >
         {[
           { name: "vuId", placeholder: "VU ID" },
           { name: "registrationNumber", placeholder: "Registration Number" },
@@ -98,7 +108,11 @@ const UpdateStudent = () => {
           value={student.dob ? student.dob.split("T")[0] : ""}
           onChange={handleChange}
         />
-        <select name="gender" value={student.gender || ""} onChange={handleChange}>
+        <select
+          name="gender"
+          value={student.gender || ""}
+          onChange={handleChange}
+        >
           <option value="">Select Gender</option>
           <option value="Male">Male</option>
           <option value="Female">Female</option>

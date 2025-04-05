@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 const ShowStudent = () => {
@@ -9,7 +10,7 @@ const ShowStudent = () => {
   useEffect(() => {
     const fetchStudents = async () => {
       try {
-        const response = await fetch(`${API_BASE_URL}/api/students`); // Correct API endpoint
+        const response = await fetch(`${API_BASE_URL}/api/students`);
         if (!response.ok) {
           throw new Error("Failed to fetch students");
         }
@@ -45,52 +46,68 @@ const ShowStudent = () => {
       <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "center" }}>
         {filteredStudents.length > 0 ? (
           filteredStudents.map((student) => (
-            <div
+            <Link
+              to={`/student/${student._id}`}
               key={student._id}
-              style={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "space-between",
-                border: "1px solid #ccc",
-                borderRadius: "10px",
-                padding: "20px",
-                margin: "10px",
-                width: "400px",
-                boxShadow: "2px 2px 10px rgba(0,0,0,0.1)",
-                backgroundColor: "#f9f9f9",
-              }}
+              style={{ textDecoration: "none", color: "inherit" }}
             >
-              {/* Left Section - Student Details */}
-              <div style={{ flex: 1, textAlign: "left" }}>
-                <h3>{student.name}</h3>
-                <p><strong>Student ID:</strong> {student.registrationNumber}</p>
-                <p><strong>Passport Number:</strong> {student.passportNumber}</p>
-                <p><strong>Age:</strong> {student.age}</p>
-                <p><strong>Passport Issue Date:</strong> {new Date(student.passportIssueDate).toLocaleDateString()}</p>
-                <p><strong>Passport Expiry Date:</strong> {new Date(student.passportExpiryDate).toLocaleDateString()}</p>
-                <p><strong>Course:</strong> {student.course}</p>
-                <p><strong>Branch:</strong> {student.branch}</p>
-                <p><strong>Year of Study:</strong> {student.yearOfStudy}</p>
-              </div>
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  border: "1px solid #ccc",
+                  borderRadius: "10px",
+                  padding: "20px",
+                  margin: "10px",
+                  width: "400px",
+                  boxShadow: "2px 2px 10px rgba(0,0,0,0.1)",
+                  backgroundColor: "#f9f9f9",
+                  cursor: "pointer",
+                }}
+              >
+                {/* Left Section - Student Details */}
+                <div style={{ flex: 1, textAlign: "left" }}>
+                  <h3>{student.name}</h3>
+                  <p><strong>Student ID:</strong> {student.registrationNumber}</p>
+                  <p><strong>Passport Number:</strong> {student.passportNumber}</p>
+                  <p><strong>Age:</strong> {student.age}</p>
+                  <p><strong>Course:</strong> {student.course}</p>
+                  <p><strong>Branch:</strong> {student.branch}</p>
+                  <p><strong>Year of Study:</strong> {student.yearOfStudy}</p>
+                </div>
 
-              {/* Right Section - Student Image */}
-              <div style={{ marginLeft: "15px", textAlign: "center" }}>
-                <p style={{ marginTop: "-30px"}}><Link to={`/update-student/${student._id}`}>
-                  <button className="edit-btn">Edit</button>
-                </Link></p>
-                {student.studentImage ? (
-                  <img
-                    src={`${student.studentImage}`} // Assuming the image is stored in 'uploads' folder
-                    alt="Student"
-                    style={{ width: "80px", height: "80px", borderRadius: "10px", objectFit: "cover" }}
-                  />
-                ) : (
-                  <div style={{ width: "80px", height: "80px", borderRadius: "10px", backgroundColor: "#ddd", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                    <span>No Image</span>
-                  </div>
-                )}
+                {/* Right Section - Student Image */}
+                <div style={{ marginLeft: "15px", textAlign: "center" }}>
+                  {student.studentImage ? (
+                    <img
+                      src={`${student.studentImage}`}
+                      alt="Student"
+                      style={{
+                        width: "80px",
+                        height: "80px",
+                        borderRadius: "10px",
+                        objectFit: "cover",
+                      }}
+                    />
+                  ) : (
+                    <div
+                      style={{
+                        width: "80px",
+                        height: "80px",
+                        borderRadius: "10px",
+                        backgroundColor: "#ddd",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                      }}
+                    >
+                      <span>No Image</span>
+                    </div>
+                  )}
+                </div>
               </div>
-            </div>
+            </Link>
           ))
         ) : (
           <p>No students found.</p>

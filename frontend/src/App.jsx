@@ -7,6 +7,7 @@ import Navbar from "./components/Navbar";
 import ShowStudent from "./components/ShowStudent";
 import axios from "axios";
 import StudentList from "./components/StudentList";
+import StudentProfile from "./components/StudentProfile";
 axios.defaults.withCredentials = true;
 
 const App = () => {
@@ -19,6 +20,8 @@ const App = () => {
         <Route path="/contact" element={<UpdateStudent />} />
         <Route path="/all-student" element={<ShowStudent/>} />
         <Route path="/update-student/:id" element={<UpdateStudent />} />
+        <Route path="/student/:id" element={<StudentProfile />} />
+
       </Routes>
     </Router>
   );
