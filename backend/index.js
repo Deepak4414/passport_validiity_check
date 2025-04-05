@@ -14,12 +14,16 @@ const corsOptions = {
   credentials: true,
 };
 
-app.use(cors(corsOptions)); // Enable CORS with options
+// app.use(cors(corsOptions)); // Enable CORS with options
 // ✅ Use JSON parser with a limit
 // app.use(cors({
 //   origin: "http://localhost:5173",
 //   credentials: true
 // }));
+app.use(cors({
+  origin: "https://passport-validiity-check-fw4thbzrb.vercel.app",
+  credentials: true
+}));
 app.use(express.json({ limit: "10mb" }));
 
 // ✅ Serve static files (if using uploads)
