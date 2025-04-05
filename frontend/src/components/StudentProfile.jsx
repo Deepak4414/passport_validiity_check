@@ -58,7 +58,7 @@ const StudentProfile = () => {
       >
         <p><strong>Registration Number:</strong> {student.registrationNumber}</p>
         <p><strong>Passport Number:</strong> {student.passportNumber}</p>
-        <p><strong>Age:</strong> {student.age}</p>
+        <p><strong>Age:</strong> {new Date(student.dob).toLocaleDateString()}</p>
         <p><strong>Passport Issue Date:</strong> {new Date(student.passportIssueDate).toLocaleDateString()}</p>
         <p><strong>Passport Expiry Date:</strong> {new Date(student.passportExpiryDate).toLocaleDateString()}</p>
         <p><strong>Course:</strong> {student.course}</p>
