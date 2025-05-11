@@ -16,113 +16,118 @@ cloudinary.config({
 const storage = new CloudinaryStorage({
   cloudinary: cloudinary,
   params: {
-    folder: "students", // Folder name in Cloudinary
+    folder: "students",
     allowed_formats: ["jpg", "jpeg", "png"],
+    transformation: [{ width: 800, height: 800, crop: "limit" }] // Resize images
   },
 });
-const upload = multer({ storage: storage });
+
+const upload = multer({ 
+  storage: storage,
+  limits: {
+    fileSize: 300 * 1024, // 300KB limit
+    files: 3 // Maximum 3 files
+  },
+  fileFilter: (req, file, cb) => {
+    if (file.mimetype.startsWith('image/')) {
+      cb(null, true);
+    } else {
+      cb(new Error('Only image files are allowed!'), false);
+    }
+  }
+}).fields([
+  { name: "studentImage", maxCount: 1 },
+  { name: "passportImage", maxCount: 1 },
+  { name: "frroImage", maxCount: 1 }
+]);
+
+// Error handling middleware for Multer
+const handleMulterErrors = (err, req, res, next) => {
+  if (err instanceof multer.MulterError) {
+    if (err.code === 'LIMIT_FILE_SIZE') {
+      return res.status(400).json({ error: "File size too large. Maximum 300KB allowed." });
+    }
+    return res.status(400).json({ error: err.message });
+  } else if (err) {
+    return res.status(400).json({ error: err.message });
+  }
+  next();
+};
 
 // POST API to add a student
 router.post(
   "/add",
-  upload.fields([
-    { name: "studentImage" },
-    { name: "passportImage" },
-    { name: "frroImage" },
-  ]),
+  (req, res, next) => {
+    upload(req, res, (err) => {
+      if (err) {
+        return res.status(400).json({ error: err.message });
+      }
+      next();
+    });
+  },
+  handleMulterErrors,
   async (req, res) => {
     try {
-      console.log("Received request:", req.body);
 
-      // Validate request body
-      const requiredFields = [
-        "vuId",
-        "registrationNumber",
-        "name",
-        "dob",
-        "gender",
-        "country",
-        "course",
-        "branch",
-        "batchOfStudying",
-        "mobileNumber",
-        "passportNumber",
-        "passportIssueDate",
-        "passportExpiryDate",
-        "frroIssueDate",
-        "frroExpiryDate",
-        "dateOfReporting",
-        "visaNumber",
-        "visaIssueDate",
-        "visaExpiryDate",
-      ];
-
-      if (!requiredFields.every((field) => req.body[field])) {
-        return res.status(400).json({ error: "Missing required fields" });
+      // Validate only VU ID is required
+      if (!req.body.vuId) {
+        return res.status(400).json({ error: "VU ID is required" });
       }
 
-      const {
-        vuId,
-        registrationNumber,
-        name,
-        dob,
-        gender,
-        country,
-        course,
-        branch,
-        batchOfStudying,
-        mobileNumber,
-        passportNumber,
-        passportIssueDate,
-        passportExpiryDate,
-        frroIssueDate,
-        frroExpiryDate,
-        dateOfReporting,
-        visaNumber,
-        visaIssueDate,
-        visaExpiryDate,
-      } = req.body;
+      // Check for duplicate VU ID (only field that needs to be unique)
+      const existingStudent = await Student.findOne({ vuId: req.body.vuId });
+      if (existingStudent) {
+        return res.status(400).json({ error: "Student with this VU ID already exists" });
+      }
 
-      // Get Cloudinary URLs
-      const studentImage = req.files["studentImage"]
-        ? req.files["studentImage"][0].path
-        : null;
-      const passportImage = req.files["passportImage"]
-        ? req.files["passportImage"][0].path
-        : null;
-      const frroImage = req.files["frroImage"]
-        ? req.files["frroImage"][0].path
-        : null;
+      // Create student object with only provided fields
+      const studentData = {
+        vuId: req.body.vuId,
+        registrationNumber: req.body.registrationNumber || undefined,
+        name: req.body.name || undefined,
+        dob: req.body.dob || undefined,
+        gender: req.body.gender || undefined,
+        country: req.body.country || undefined,
+        course: req.body.course || undefined,
+        branch: req.body.branch || undefined,
+        batchOfStudying: req.body.batchOfStudying || undefined,
+        mobileNumber: req.body.mobileNumber || undefined,
+        addressMode: req.body.addressMode || undefined,  // New field
+        currentAddress: req.body.currentAddress || undefined,  // New field
+        passportNumber: req.body.passportNumber || undefined,
+        passportIssueDate: req.body.passportIssueDate || undefined,
+        passportExpiryDate: req.body.passportExpiryDate || undefined,
+        frroIssueDate: req.body.frroIssueDate || undefined,
+        frroExpiryDate: req.body.frroExpiryDate || undefined,
+        dateOfReporting: req.body.dateOfReporting || undefined,
+        studentStatus: "Not Yet Informed"
+      };
 
-      const newStudent = new Student({
-        vuId,
-        registrationNumber,
-        name,
-        dob,
-        gender,
-        country,
-        course,
-        branch,
-        batchOfStudying,
-        mobileNumber,
-        studentImage,
-        passportImage,
-        passportNumber,
-        passportIssueDate,
-        passportExpiryDate,
-        frroImage,
-        frroIssueDate,
-        frroExpiryDate,
-        dateOfReporting,
-        visaNumber,
-        visaIssueDate,
-        visaExpiryDate,
-      });
+      // Add image URLs if files were uploaded
+      if (req.files) {
+        if (req.files["studentImage"]) {
+          studentData.studentImage = req.files["studentImage"][0].path;
+        }
+        if (req.files["passportImage"]) {
+          studentData.passportImage = req.files["passportImage"][0].path;
+        }
+        if (req.files["frroImage"]) {
+          studentData.frroImage = req.files["frroImage"][0].path;
+        }
+      }
 
+      const newStudent = new Student(studentData);
       await newStudent.save();
-      res.status(201).json({ message: "Student added successfully!" });
+      
+      res.status(201).json({ 
+        message: "Student added successfully!",
+        studentId: newStudent._id 
+      });
     } catch (error) {
       console.error("Error adding student:", error);
+      
+     
+      
       res.status(500).json({ error: "Failed to add student" });
     }
   }

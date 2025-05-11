@@ -1,11 +1,22 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import * as XLSX from "xlsx";
+import { saveAs } from "file-saver";
+import "./ShowStudent.css"; // Create this CSS file for additional styles
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 const ShowStudent = () => {
   const [students, setStudents] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
+  const [filters, setFilters] = useState({
+    addressMode: null,
+    country: null,
+    course: null,
+    year: null,
+    branch: null
+  });
+  const [showFilters, setShowFilters] = useState(false);
 
   useEffect(() => {
     const fetchStudents = async () => {
@@ -24,94 +35,225 @@ const ShowStudent = () => {
     fetchStudents();
   }, []);
 
+  // Extract unique values for filters
+  const uniqueValues = {
+    addressMode: [...new Set(students.map(s => s.addressMode))].filter(Boolean),
+    country: [...new Set(students.map(s => s.country))].filter(Boolean),
+    course: [...new Set(students.map(s => s.course))].filter(Boolean),
+    year: [...new Set(students.map(s => s.batchOfStudying))].filter(Boolean),
+    branch: [...new Set(students.map(s => s.branch))].filter(Boolean)
+  };
+
+  const handleFilterChange = (filterType, value) => {
+    setFilters(prev => ({
+      ...prev,
+      [filterType]: prev[filterType] === value ? null : value
+    }));
+  };
+
+  const clearAllFilters = () => {
+    setFilters({
+      addressMode: null,
+      country: null,
+      course: null,
+      year: null,
+      branch: null
+    });
+  };
+
   const filteredStudents = students.filter((student) => {
-    const studentName = student.registrationNumber.toLowerCase();
-    const searchQueryLower = searchQuery.toLowerCase();
-    return studentName.includes(searchQueryLower);
+    // Search filter
+    const matchesSearch = 
+      student.registrationNumber.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      student.name.toLowerCase().includes(searchQuery.toLowerCase());
+
+    // Check all active filters
+    const matchesFilters = (
+      (!filters.addressMode || student.addressMode === filters.addressMode) &&
+      (!filters.country || student.country === filters.country) &&
+      (!filters.course || student.course === filters.course) &&
+      (!filters.year || student.batchOfStudying === filters.year) &&
+      (!filters.branch || student.branch === filters.branch)
+    );
+
+    return matchesSearch && matchesFilters;
   });
 
+  const exportToExcel = () => {
+    const worksheet = XLSX.utils.json_to_sheet(filteredStudents);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Students");
+    const excelBuffer = XLSX.write(workbook, { bookType: "xlsx", type: "array" });
+    const data = new Blob([excelBuffer], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
+    saveAs(data, "students_data.xlsx");
+  };
+
   return (
-    <div style={{ textAlign: "center", padding: "20px" }}>
-      <h2>Student Details</h2>
-      <div style={{ marginBottom: "20px" }}>
+    <div className="student-list-container">
+      {/* Header with search and actions */}
+      <div className="list-header">
+        <h2>Student Details</h2>
+        <div className="action-buttons">
+          <button 
+            className="filter-toggle-btn"
+            onClick={() => setShowFilters(!showFilters)}
+          >
+            {showFilters ? "Hide Filters" : "Show Filters"}
+          </button>
+          <button 
+            className="export-btn"
+            onClick={exportToExcel}
+          >
+            Export to Excel
+          </button>
+        </div>
+      </div>
+
+      {/* Search bar */}
+      <div className="search-bar">
         <input
           type="search"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          placeholder="Search by Registration Number"
-          style={{ width: "50%", padding: "10px", fontSize: "16px" }}
+          placeholder="Search by Name or Registration Number"
         />
       </div>
 
-      <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "center" }}>
-        {filteredStudents.length > 0 ? (
-          filteredStudents.map((student) => (
-            <Link
-              to={`/student/${student._id}`}
-              key={student._id}
-              style={{ textDecoration: "none", color: "inherit" }}
-            >
-              <div
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "space-between",
-                  border: "1px solid #ccc",
-                  borderRadius: "10px",
-                  padding: "20px",
-                  margin: "10px",
-                  width: "400px",
-                  boxShadow: "2px 2px 10px rgba(0,0,0,0.1)",
-                  backgroundColor: "#f9f9f9",
-                  cursor: "pointer",
-                }}
+      {/* Main content area */}
+      <div className="content-area">
+        {/* Filters sidebar */}
+        { (
+          <div className="filters-sidebar">
+            <div className="filters-header">
+              <h3>Filters</h3>
+              <button 
+                className="clear-filters-btn"
+                onClick={clearAllFilters}
               >
-                {/* Left Section - Student Details */}
-                <div style={{ flex: 1, textAlign: "left" }}>
-                  <h3>{student.name}</h3>
-                  <p><strong>Student ID:</strong> {student.registrationNumber}</p>
-                  <p><strong>Passport Number:</strong> {student.passportNumber}</p>
-                  <p><strong>Age:</strong> {new Date(student.dob).toLocaleDateString()}</p>
-                  <p><strong>Course:</strong> {student.course}</p>
-                  <p><strong>Branch:</strong> {student.branch}</p>
-                  <p><strong>Year of Study:</strong> {student.yearOfStudy}</p>
-                </div>
+                Clear All
+              </button>
+            </div>
 
-                {/* Right Section - Student Image */}
-                <div style={{ marginLeft: "15px", textAlign: "center" }}>
-                  {student.studentImage ? (
-                    <img
-                      src={`${student.studentImage}`}
-                      alt="Student"
-                      style={{
-                        width: "80px",
-                        height: "80px",
-                        borderRadius: "10px",
-                        objectFit: "cover",
-                      }}
-                    />
-                  ) : (
-                    <div
-                      style={{
-                        width: "80px",
-                        height: "80px",
-                        borderRadius: "10px",
-                        backgroundColor: "#ddd",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                      }}
-                    >
-                      <span>No Image</span>
-                    </div>
-                  )}
-                </div>
+            {/* Residence Type Filter */}
+            <div className="filter-section">
+              <h4 className="filter-title">Residence Type</h4>
+              <div className="filter-options">
+                {uniqueValues.addressMode.map(mode => (
+                  <div 
+                    key={mode}
+                    className={`filter-option ${filters.addressMode === mode ? 'active' : ''}`}
+                    onClick={() => handleFilterChange("addressMode", mode)}
+                  >
+                    {mode}
+                  </div>
+                ))}
               </div>
-            </Link>
-          ))
-        ) : (
-          <p>No students found.</p>
+            </div>
+
+            {/* Country Filter */}
+            <div className="filter-section">
+              <h4 className="filter-title">Country</h4>
+              <div className="filter-options">
+                {uniqueValues.country.map(country => (
+                  <div 
+                    key={country}
+                    className={`filter-option ${filters.country === country ? 'active' : ''}`}
+                    onClick={() => handleFilterChange("country", country)}
+                  >
+                    {country}
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Course Filter */}
+            <div className="filter-section">
+              <h4 className="filter-title">Course</h4>
+              <div className="filter-options">
+                {uniqueValues.course.map(course => (
+                  <div 
+                    key={course}
+                    className={`filter-option ${filters.course === course ? 'active' : ''}`}
+                    onClick={() => handleFilterChange("course", course)}
+                  >
+                    {course}
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Year Filter */}
+            <div className="filter-section">
+              <h4 className="filter-title">Batch Year</h4>
+              <div className="filter-options">
+                {uniqueValues.year.map(year => (
+                  <div 
+                    key={year}
+                    className={`filter-option ${filters.year === year ? 'active' : ''}`}
+                    onClick={() => handleFilterChange("year", year)}
+                  >
+                    {year}
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Branch Filter */}
+            <div className="filter-section">
+              <h4 className="filter-title">Branch</h4>
+              <div className="filter-options">
+                {uniqueValues.branch.map(branch => (
+                  <div 
+                    key={branch}
+                    className={`filter-option ${filters.branch === branch ? 'active' : ''}`}
+                    onClick={() => handleFilterChange("branch", branch)}
+                  >
+                    {branch}
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
         )}
+
+        {/* Students List */}
+        <div className="students-grid">
+          {filteredStudents.length > 0 ? (
+            filteredStudents.map((student) => (
+              <Link
+                to={`/student/${student._id}`}
+                key={student._id}
+                className="student-card-link"
+              >
+                <div className="student-card">
+                  <div className="student-image">
+                    {student.studentImage ? (
+                      <img
+                        src={`${student.studentImage}`}
+                        alt="Student"
+                      />
+                    ) : (
+                      <div className="no-image-placeholder">
+                        <span>No Image</span>
+                      </div>
+                    )}
+                  </div>
+                  <div className="student-details">
+                    <h3>{student.name}</h3>
+                    <p><strong>ID:</strong> {student.registrationNumber}</p>
+                    <p><strong>Passport Number: </strong> {student.passportNumber}</p>
+                    <p><strong>Frro Expiry: </strong>{new Date(student.frroExpiryDate).toLocaleDateString()}</p>
+                  </div>
+                </div>
+              </Link>
+            ))
+          ) : (
+            <div className="no-results">
+              <p>No students found matching your criteria.</p>
+              <button onClick={clearAllFilters}>Clear all filters</button>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

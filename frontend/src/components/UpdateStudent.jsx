@@ -69,98 +69,198 @@ const UpdateStudent = () => {
   return (
     <div className="container">
       <Link to={`/student/${id}`}>
-        <button className="edit-btn" >
-        ⬅️
-        </button>
+        <button className="edit-btn">⬅️</button>
       </Link>
 
       <h2 className="title">Update Student Details</h2>
-      <form
-        onSubmit={handleSubmit}
-        className="form"
-        encType="multipart/form-data"
-      >
-        {[
-          { name: "vuId", placeholder: "VU ID" },
-          { name: "registrationNumber", placeholder: "Registration Number" },
-          { name: "name", placeholder: "Name" },
-          { name: "country", placeholder: "Country" },
-          { name: "course", placeholder: "Course" },
-          { name: "branch", placeholder: "Branch" },
-          { name: "batchOfStudying", placeholder: "Batch of Studying" },
-          { name: "mobileNumber", placeholder: "Mobile Number" },
-          { name: "passportNumber", placeholder: "Passport Number" },
-          { name: "visaNumber", placeholder: "Visa Number" },
-        ].map(({ name, placeholder }) => (
-          <input
-            key={name}
-            type="text"
-            name={name}
-            value={student[name] || ""}
-            onChange={handleChange}
-            placeholder={placeholder}
-          />
-        ))}
-
-        <input
-          type="date"
-          name="dob"
-          value={student.dob ? student.dob.split("T")[0] : ""}
-          onChange={handleChange}
-        />
-        <select
-          name="gender"
-          value={student.gender || ""}
-          onChange={handleChange}
-        >
-          <option value="">Select Gender</option>
-          <option value="Male">Male</option>
-          <option value="Female">Female</option>
-          <option value="Other">Other</option>
-        </select>
-
-        {/* IMAGE SECTION WITH PREVIEWS */}
-        <div className="image-section">
-          <label>Current Student Image:</label>
-          {student.studentImage && (
-            <img src={student.studentImage} alt="Student" width={150} />
-          )}
-          <input type="file" name="studentImage" onChange={handleFileChange} />
-
-          <label>Current Passport Image:</label>
-          {student.passportImage && (
-            <img src={student.passportImage} alt="Passport" width={150} />
-          )}
-          <input type="file" name="passportImage" onChange={handleFileChange} />
-
-          <label>Current FRRO Image:</label>
-          {student.frroImage && (
-            <img src={student.frroImage} alt="FRRO" width={150} />
-          )}
-          <input type="file" name="frroImage" onChange={handleFileChange} />
-        </div>
-
-        {[
-          { name: "passportIssueDate", label: "Passport Issue Date" },
-          { name: "passportExpiryDate", label: "Passport Expiry Date" },
-          { name: "frroIssueDate", label: "FRRO Issue Date" },
-          { name: "frroExpiryDate", label: "FRRO Expiry Date" },
-          { name: "visaIssueDate", label: "Visa Issue Date" },
-          { name: "visaExpiryDate", label: "Visa Expiry Date" },
-          { name: "dateOfReporting", label: "Date of Reporting" },
-        ].map(({ name, label }) => (
-          <div key={name}>
-            <label>{label}:</label>
+      <form onSubmit={handleSubmit} className="form" encType="multipart/form-data">
+        {/* Basic Information Section */}
+        <fieldset>
+          <legend>Basic Information</legend>
+          <div className="form-group">
+            <input
+              type="text"
+              name="vuId"
+              value={student.vuId || ""}
+              onChange={handleChange}
+              placeholder="VU ID"
+            />
+            <input
+              type="text"
+              name="registrationNumber"
+              value={student.registrationNumber || ""}
+              onChange={handleChange}
+              placeholder="Registration Number"
+            />
+            <input
+              type="text"
+              name="name"
+              value={student.name || ""}
+              onChange={handleChange}
+              placeholder="Name"
+            />
             <input
               type="date"
-              name={name}
-              value={student[name] ? student[name].split("T")[0] : ""}
+              name="dob"
+              value={student.dob ? student.dob.split("T")[0] : ""}
               onChange={handleChange}
+              placeholder="Date of Birth"
+            />
+            <select
+              name="gender"
+              value={student.gender || ""}
+              onChange={handleChange}
+            >
+              <option value="">Select Gender</option>
+              <option value="Male">Male</option>
+              <option value="Female">Female</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+        </fieldset>
+
+        {/* Academic Information Section */}
+        <fieldset>
+          <legend>Academic Information</legend>
+          <div className="form-group">
+            <input
+              type="text"
+              name="country"
+              value={student.country || ""}
+              onChange={handleChange}
+              placeholder="Country"
+            />
+            <input
+              type="text"
+              name="course"
+              value={student.course || ""}
+              onChange={handleChange}
+              placeholder="Course"
+            />
+            <input
+              type="text"
+              name="branch"
+              value={student.branch || ""}
+              onChange={handleChange}
+              placeholder="Branch"
+            />
+            <input
+              type="text"
+              name="batchOfStudying"
+              value={student.batchOfStudying || ""}
+              onChange={handleChange}
+              placeholder="Batch of Studying"
             />
           </div>
-        ))}
+        </fieldset>
 
-        <button type="submit">Update Student</button>
+        {/* Contact Information Section */}
+        <fieldset>
+          <legend>Contact Information</legend>
+          <div className="form-group">
+            <input
+              type="text"
+              name="mobileNumber"
+              value={student.mobileNumber || ""}
+              onChange={handleChange}
+              placeholder="Mobile Number"
+            />
+            Address Mode
+            <select 
+                name="addressMode" 
+                value={student.addressMode} 
+                onChange={handleChange}
+              >
+                <option value="">Select</option>
+                <option value="hostler">Hostler</option>
+                <option value="dayscholar">Dayscholar</option>
+              </select>
+           Current Address<input
+              type="text"
+              name="currentAddress"
+              value={student.currentAddress || ""}
+              onChange={handleChange}
+              placeholder="Current Address"
+            />
+          </div>
+        </fieldset>
+
+        {/* Student Image Section */}
+        <fieldset>
+          <legend>Student Image</legend>
+          <div className="image-section">
+            Student Image{student.studentImage && (
+              <img src={student.studentImage} alt="Student" width={150} />
+            )}
+            <input type="file" name="studentImage" onChange={handleFileChange} />
+          </div>
+        </fieldset>
+
+        {/* Passport Information Section */}
+        <fieldset>
+          <legend>Passport Information</legend>
+          <div className="form-group">
+            Passport Number<input
+              type="text"
+              name="passportNumber"
+              value={student.passportNumber || ""}
+              onChange={handleChange}
+              placeholder="Passport Number"
+            />
+            Passport Issue Date<input
+              type="date"
+              name="passportIssueDate"
+              value={student.passportIssueDate ? student.passportIssueDate.split("T")[0] : ""}
+              onChange={handleChange}
+              placeholder="Passport Issue Date"
+            />
+            Passport Expiry Date <input
+              type="date"
+              name="passportExpiryDate"
+              value={student.passportExpiryDate ? student.passportExpiryDate.split("T")[0] : ""}
+              onChange={handleChange}
+              placeholder="Passport Expiry Date"
+            />
+          </div>
+          <div className="image-section">
+            Passport Image{student.passportImage && (
+              <img src={student.passportImage} alt="Passport" width={150} />
+            )}
+            <input type="file" name="passportImage" onChange={handleFileChange} />
+          </div>
+        </fieldset>
+
+        {/* FRRO Information Section */}
+        <fieldset>
+          <legend>FRRO Information</legend>
+          <div className="form-group">
+            FRRO Issue Date<input
+              type="date"
+              name="frroIssueDate"
+              value={student.frroIssueDate ? student.frroIssueDate.split("T")[0] : ""}
+              onChange={handleChange}
+              placeholder="FRRO Issue Date"
+            />
+
+            FRRO Expiry Date<input
+              type="date"
+              name="frroExpiryDate"
+              value={student.frroExpiryDate ? student.frroExpiryDate.split("T")[0] : ""}
+              onChange={handleChange}
+              placeholder="FRRO Expiry Date"
+            />
+          </div>
+          <div className="image-section">
+            FRRO Image{student.frroImage && (
+            <img src={student.frroImage} alt="FRRO" width={150} />
+            )}
+            <input type="file" name="frroImage" onChange={handleFileChange} />
+          </div>
+        </fieldset>
+
+      
+
+        <button type="submit" className="submit-button">Update Student</button>
       </form>
     </div>
   );
