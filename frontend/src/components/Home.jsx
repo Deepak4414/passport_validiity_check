@@ -3,17 +3,15 @@ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 const Home = () => {
   const [students, setStudents] = useState([]);
-  const [studentStatus, setStudentStatus] = useState({}); // store status per student._id
+  const [studentStatus, setStudentStatus] = useState({});
 
   useEffect(() => {
     const fetchStudents = async () => {
       try {
         const response = await fetch(`${API_BASE_URL}/api/students`);
-        if (!response.ok) {
-          throw new Error("Failed to fetch students");
-        }
-        const data = await response.json();
+        if (!response.ok) throw new Error("Failed to fetch students");
 
+        const data = await response.json();
         const today = new Date();
         const oneMonthLater = new Date();
         oneMonthLater.setMonth(oneMonthLater.getMonth() + 1);
@@ -23,15 +21,13 @@ const Home = () => {
           return expiryDate >= today && expiryDate <= oneMonthLater;
         });
 
-        // Optional: initialize status to "Not Yet Informed"
         const defaultStatuses = {};
         filteredStudents.forEach(s => {
-          defaultStatuses[s._id] = "Not Yet Informed";
+          defaultStatuses[s._id] = s.studentStatus || "Not Yet Informed";
         });
 
         setStudents(filteredStudents);
         setStudentStatus(defaultStatuses);
-
       } catch (error) {
         console.error("Error fetching students:", error);
       }
@@ -41,32 +37,33 @@ const Home = () => {
   }, []);
 
   const handleStatusChange = async (studentId, newStatus) => {
-  try {
-    // Update on backend
-    const response = await fetch(`${API_BASE_URL}/api/students/${studentId}/status`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ status: newStatus }),
-    });
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/students/${studentId}/status`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status: newStatus }),
+      });
 
-    if (!response.ok) {
-      throw new Error("Failed to update status");
+      if (!response.ok) throw new Error("Failed to update status");
+
+      setStudentStatus(prev => ({ ...prev, [studentId]: newStatus }));
+
+      // If applied for renewal, remove student from list
+      if (newStatus === "Applied for Renewal") {
+        setStudents(prev => prev.filter(s => s._id !== studentId));
+      } else {
+        // Otherwise update the student in list
+        setStudents(prev =>
+          prev.map(s =>
+            s._id === studentId ? { ...s, studentStatus: newStatus } : s
+          )
+        );
+      }
+
+    } catch (error) {
+      console.error("Error updating status:", error);
     }
-
-    // Update local state
-    setStudents(prevStudents =>
-      prevStudents.map(student =>
-        student._id === studentId ? { ...student, studentStatus: newStatus } : student
-      )
-    );
-     // Update studentStatus object
-     setStudentStatus(prevStudentStatus => ({ ...prevStudentStatus, [studentId]: newStatus }));
-
-  } catch (error) {
-    console.error("Error updating status:", error);
-  }
-};
-
+  };
 
   const statusColors = {
     "Informed": "green",
@@ -74,13 +71,18 @@ const Home = () => {
     "Not Yet Informed": "gray",
   };
 
+  const visibleStudents = students.filter(
+    s => studentStatus[s._id] !== "Applied for Renewal"
+  );
+
   return (
     <div style={{ textAlign: "center", padding: "20px" }}>
       <h1>Welcome to the International Student Passport</h1>
       <h2>Students with Passport Expiry within 1 Month</h2>
+
       <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "center" }}>
-        {students.length > 0 ? (
-          students.map((student) => (
+        {visibleStudents.length > 0 ? (
+          visibleStudents.map((student) => (
             <div
               key={student._id}
               style={{
@@ -97,15 +99,15 @@ const Home = () => {
                 backgroundColor: "#f9f9f9",
               }}
             >
-              {/* Top-right status selector */}
+              {/* Status Selector */}
               <div style={{ position: "absolute", top: "0px", right: "0px" }}>
                 <select
-                   value={student.studentStatus || "Not Yet Informed"}
+                  value={studentStatus[student._id] || "Not Yet Informed"}
                   onChange={(e) => handleStatusChange(student._id, e.target.value)}
                   style={{
                     padding: "4px 0px",
                     borderRadius: "5px",
-                    backgroundColor: statusColors[student.studentStatus] || "#ddd",
+                    backgroundColor: statusColors[studentStatus[student._id]] || "#ddd",
                     border: "1px solid #aaa",
                     fontSize: "0.9rem",
                   }}
@@ -116,7 +118,7 @@ const Home = () => {
                 </select>
               </div>
 
-              {/* Left Section - Student Details */}
+              {/* Left Details */}
               <div style={{ flex: 1, textAlign: "left" }}>
                 <h3>{student.name}</h3>
                 <p><strong>Registration Number:</strong> {student.registrationNumber}</p>
@@ -142,7 +144,7 @@ const Home = () => {
                 }</p>
               </div>
 
-              {/* Right Section - Student Image */}
+              {/* Right Image */}
               <div style={{ marginLeft: "15px", textAlign: "center" }}>
                 {student.studentImage ? (
                   <img
@@ -151,7 +153,11 @@ const Home = () => {
                     style={{ width: "80px", height: "80px", borderRadius: "10px", objectFit: "cover" }}
                   />
                 ) : (
-                  <div style={{ width: "80px", height: "80px", borderRadius: "10px", backgroundColor: "#ddd", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                  <div style={{
+                    width: "80px", height: "80px", borderRadius: "10px",
+                    backgroundColor: "#ddd", display: "flex",
+                    alignItems: "center", justifyContent: "center"
+                  }}>
                     <span>No Image</span>
                   </div>
                 )}
