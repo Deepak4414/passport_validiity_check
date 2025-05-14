@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 const StudentProfile = () => {
   const { id } = useParams();
   const [student, setStudent] = useState(null);
-
+ const navigate = useNavigate(); // for redirection
   useEffect(() => {
     const fetchStudent = async () => {
       try {
@@ -26,6 +26,28 @@ const StudentProfile = () => {
 
   if (!student) return <p>Loading student profile...</p>;
 
+  
+const handleDelete = async () => {
+    const confirmDelete = window.confirm("Are you sure you want to delete this student?");
+    if (!confirmDelete) return;
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/students/${id}`, {
+        method: "DELETE",
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to delete student");
+      }
+
+      alert("Student profile deleted successfully!");
+      navigate("/all-student"); // Redirect after deletion
+    } catch (error) {
+      console.error("Error deleting student:", error);
+      alert("Failed to delete the student profile.");
+    }
+  };
+
   return (
     <div style={{ padding: "30px", textAlign: "center" }}>
       <div style={{ display: "flex", justifyContent: "space-between" }}>
@@ -40,7 +62,15 @@ const StudentProfile = () => {
               Edit
             </button>
           </Link>
+          <button
+            className="edit-btn"
+            style={{ backgroundColor: "red", color: "white" }}
+            onClick={handleDelete}
+          >
+            Delete
+          </button>
         </p>
+
       </div>
       
       <h2>{student.name}'s Profile</h2>

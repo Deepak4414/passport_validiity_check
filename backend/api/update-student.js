@@ -23,29 +23,63 @@ const storage = new CloudinaryStorage({
 
 const upload = multer({ storage: storage });
 
-// **UPDATE STUDENT DETAILS API**
-router.put("/update/:id", upload.fields([{ name: "studentImage" }, { name: "passportImage" }, { name: "frroImage" }]), async (req, res) => {
-  try {
-    const studentId = req.params.id;
-    let updateData = { ...req.body };
+router.put(
+  "/update/:id",
+  upload.fields([
+    { name: "studentImage", maxCount: 1 },
+    { name: "passportImage", maxCount: 1 },
+    { name: "frroImage", maxCount: 1 }
+  ]),
+  async (req, res) => {
+    try {
+      const studentId = req.params.id;
+      const student = await Student.findById(studentId);
 
-    // Handle Image Updates
-    if (req.files["studentImage"]) updateData.studentImage = req.files["studentImage"][0].path;
-    if (req.files["passportImage"]) updateData.passportImage = req.files["passportImage"][0].path;
-    if (req.files["frroImage"]) updateData.frroImage = req.files["frroImage"][0].path;
+      if (!student) return res.status(404).json({ error: "Student not found" });
 
-    // Update student record in MongoDB
-    const updatedStudent = await Student.findByIdAndUpdate(studentId, updateData, { new: true });
+      let updateData = { ...req.body };
 
-    if (!updatedStudent) return res.status(404).json({ error: "Student not found" });
+      // === Cloudinary Image Deletion Helper ===
+      const deleteOldImage = async (url) => {
+        if (!url) return;
+        const parts = url.split("/");
+        const filename = parts[parts.length - 1];
+        const publicId = `students/${filename.split(".")[0]}`;
+        try {
+          await cloudinary.uploader.destroy(publicId);
+          console.log("Deleted from Cloudinary:", publicId);
+        } catch (err) {
+          console.error("Cloudinary deletion error:", err);
+        }
+      };
 
-    res.status(200).json({ message: "Student updated successfully!", updatedStudent });
-  } catch (error) {
-    console.error("Error updating student:", error);
-    res.status(500).json({ error: "Failed to update student" });
+      // === Handle New Image Uploads and Old Image Deletion ===
+      if (req.files["studentImage"]) {
+        await deleteOldImage(student.studentImage);
+        updateData.studentImage = req.files["studentImage"][0].path;
+      }
+      if (req.files["passportImage"]) {
+        await deleteOldImage(student.passportImage);
+        updateData.passportImage = req.files["passportImage"][0].path;
+      }
+      if (req.files["frroImage"]) {
+        await deleteOldImage(student.frroImage);
+        updateData.frroImage = req.files["frroImage"][0].path;
+      }
+
+      // === Update student in DB ===
+      const updatedStudent = await Student.findByIdAndUpdate(studentId, updateData, {
+        new: true
+      });
+
+      res.status(200).json({
+        message: "Student updated successfully!",
+        updatedStudent
+      });
+    } catch (error) {
+      console.error("Error updating student:", error);
+      res.status(500).json({ error: "Failed to update student" });
+    }
   }
-});
-
-
-
+);
 module.exports = router;
